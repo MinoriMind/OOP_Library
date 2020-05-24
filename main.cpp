@@ -7,11 +7,11 @@ using namespace std;
 class Library
 {
 public:
-    HashTable books;
+    HashTable *books;
 
     Library(int size)
     {
-        books = HashTable(size);
+        books = new HashTable(size);
     };
 };
 
@@ -33,7 +33,7 @@ public:
         if (debt == true)
         {
             debt = false;
-            lib.books.Add(onHandsBook);
+            lib.books->Add(onHandsBook);
         };
     }
 };
@@ -67,7 +67,7 @@ public:
         }
         else
         {
-            if (lib->books.Delete(_book))
+            if (lib->books->Delete(_book))
             {
                 user.debt = true;
                 user.onHandsBook = _book;
@@ -88,28 +88,26 @@ int main()
     book.name = "Name";
     book.author = "Author";
     //cout << "5435";
-    for (int i = 0; i <= 10; i++)
+    for (int i = 0; i < 10; i++)
     {
-        lib.books.Add(book);
+        lib.books->Add(book);
         book.name[0]++;
         book.author[0]++;
     }
-    cout << "5435";
 
     book.name = "Name";
     book.author = "Author";
     User user1;
     User user2;
-
     Librarian librarian(&lib);
+    librarian.GiveBookTo(book, user1);
 
     librarian.GiveBookTo(book, user1);
-    //librarian.GiveBookTo(book, user1);
 
-    //librarian.GiveBookTo(book, user2);
+    librarian.GiveBookTo(book, user2);
 
-    //user1.ReturnBook(library, book);
-    //librarian.GiveBookTo(book, user2);
+    user1.ReturnBook(lib);
+    librarian.GiveBookTo(book, user2);
 
 
     return 0;
