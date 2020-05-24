@@ -1,27 +1,18 @@
 #include <iostream>
 #include <vector>
+#include "Hash.cpp"
 
 using namespace std;
-
-enum BookState
-{
-    IS,
-    TAKEN
-};
-
-class Book
-{
-public:
-    string author;
-    string name;
-    BookState bookState;
-};
 
 class Library
 {
 public:
-    vector<Book> books;
+    HashTable books;
 
+    Library(int size)
+    {
+        books = HashTable(size);
+    };
 };
 
 class User
@@ -30,7 +21,6 @@ class User
 
     bool debt;
     Book onHandsBook;
-    int takenBookIndex;
 
 public:
     User()
@@ -38,25 +28,13 @@ public:
         debt = false;
     };
 
-    int AskBook(Library &lib, Book &_book)
+    void ReturnBook(Library &lib)
     {
-        for (int i = 0; i < lib.books.size(); i++)
+        if (debt == true)
         {
-            if ((lib.books[i].name == _book.name) &&
-                (lib.books[i].author == _book.author) &&
-                (lib.books[i].bookState == IS))
-            {
-                takenBookIndex = i;
-                return i;
-            }
-        }
-        return -1;
-    };
-
-    void ReturnBook(Library &lib, Book &_book)
-    {
-        debt = false;
-        lib.books[takenBookIndex].bookState = IS;
+            debt = false;
+            lib.books.Add(onHandsBook);
+        };
     }
 };
 
@@ -89,10 +67,8 @@ public:
         }
         else
         {
-            int index = AskBook(*lib, _book);
-            if (index != -1)
+            if (lib->books.Delete(_book))
             {
-                lib->books[index].bookState = TAKEN;
                 user.debt = true;
                 user.onHandsBook = _book;
             }
@@ -107,30 +83,30 @@ public:
 
 int main()
 {
-    Library library;
+    Library lib(10);
     Book book;
     book.name = "Name";
     book.author = "Author";
-
+    //cout << "5435";
     for (int i = 0; i <= 10; i++)
     {
-        book.bookState = IS;
-        library.books.push_back(book);
+        lib.books.Add(book);
         book.name[0]++;
         book.author[0]++;
     }
+    cout << "5435";
 
     book.name = "Name";
     book.author = "Author";
     User user1;
     User user2;
 
-    Librarian librarian(&library);
+    Librarian librarian(&lib);
 
     librarian.GiveBookTo(book, user1);
-    librarian.GiveBookTo(book, user1);
+    //librarian.GiveBookTo(book, user1);
 
-    librarian.GiveBookTo(book, user2);
+    //librarian.GiveBookTo(book, user2);
 
     //user1.ReturnBook(library, book);
     //librarian.GiveBookTo(book, user2);
